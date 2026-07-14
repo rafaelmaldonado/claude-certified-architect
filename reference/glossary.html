@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glossary — Claude Certified Architect</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<p class="eyebrow">Reference · Glossary</p>
+<h1>Course Glossary</h1>
+<p class="lede">The shared vocabulary of the four exam domains. Every lesson uses these terms exactly as defined here. This is the canonical spelling of each concept — revisit it often.</p>
+
+<div class="callout key"><span class="tag">Adhere to this</span>
+Once a term is defined here, all lessons use it consistently. If a lesson introduces a new term, it gets added here.</div>
+
+<h2>The four exam domains</h2>
+<table>
+<tr><th>Domain</th><th>One-line meaning</th></tr>
+<tr><td><strong>Claude API</strong></td><td>The <code>/v1/messages</code> HTTP endpoint (and its SDKs) for sending prompts and getting responses. Everything else builds on it.</td></tr>
+<tr><td><strong>Model Context Protocol (MCP)</strong></td><td>An open standard for connecting Claude to external tools/data via reusable "servers" — like a USB port for AI capabilities.</td></tr>
+<tr><td><strong>Claude Agent SDK</strong></td><td>Claude Code packaged as a library: a batteries-included coding/filesystem agent (built-in Read/Write/Bash/etc.) you run on your own infra.</td></tr>
+<tr><td><strong>Claude Code</strong></td><td>Anthropic's agentic CLI/IDE tool for software work — the end-user product built on the same primitives.</td></tr>
+</table>
+
+<h2>Core API concepts</h2>
+<table>
+<tr><th>Term</th><th>Definition</th></tr>
+<tr><td><strong>Messages API</strong></td><td>The single endpoint <code>POST /v1/messages</code>. Tools, structured output, thinking, and caching are all <em>features of this one endpoint</em>, not separate APIs.</td></tr>
+<tr><td><strong>Stateless</strong></td><td>The API keeps no memory between calls. You resend the full conversation history every request.</td></tr>
+<tr><td><strong>System prompt</strong></td><td>Top-level instructions that set the model's role/behavior, separate from the user turns.</td></tr>
+<tr><td><strong>Tool use</strong></td><td>The model requests a function call (a <code>tool_use</code> block); your code runs it and returns a <code>tool_result</code>. Basis of all agents.</td></tr>
+<tr><td><strong>Tool Runner</strong></td><td>An SDK helper that automates the request → run tool → feed result → repeat loop for tools <em>you</em> define. Harness only; you host it.</td></tr>
+<tr><td><strong>Adaptive thinking</strong></td><td><code>thinking: {type:"adaptive"}</code> — the model decides when/how much to reason. Replaces the old fixed <code>budget_tokens</code>.</td></tr>
+<tr><td><strong>Effort</strong></td><td><code>output_config.effort</code> (low→max): dials thinking depth and total token spend. The main cost/quality lever.</td></tr>
+<tr><td><strong>Prompt caching</strong></td><td>Reuse a stable prompt prefix across requests (~90% cheaper on the cached part). A <em>prefix match</em> — any byte change invalidates everything after it.</td></tr>
+<tr><td><strong>Structured outputs</strong></td><td>Constrain the response to a JSON schema (<code>output_config.format</code>) so it's guaranteed parseable.</td></tr>
+<tr><td><strong>Streaming</strong></td><td>Receive the response incrementally as Server-Sent Events. Required for large <code>max_tokens</code> to avoid timeouts.</td></tr>
+<tr><td><strong>stop_reason</strong></td><td>Why the model stopped: <code>end_turn</code>, <code>max_tokens</code>, <code>tool_use</code>, <code>pause_turn</code>, <code>refusal</code>.</td></tr>
+</table>
+
+<h2>Agent & orchestration concepts</h2>
+<table>
+<tr><th>Term</th><th>Definition</th></tr>
+<tr><td><strong>Workflow</strong></td><td>Multi-step pipeline where <em>your code</em> controls the flow. Predictable; you decide each step.</td></tr>
+<tr><td><strong>Agent</strong></td><td>Open-ended, model-driven tool use — the model decides the steps. Use only when the task truly needs it.</td></tr>
+<tr><td><strong>Managed Agents (CMA)</strong></td><td>Anthropic hosts <em>both</em> the agent loop and a per-session sandbox. Persisted, versioned agent configs + sessions.</td></tr>
+<tr><td><strong>Harness vs deployment</strong></td><td>Harness = the agent loop + context management. Deployment = the infra it runs on. Managed Agents supplies both; Tool Runner & Agent SDK supply harness only.</td></tr>
+<tr><td><strong>MCP server</strong></td><td>A process exposing tools/resources/prompts over MCP. Reusable across any MCP client (Claude Code, the API's MCP connector, etc.).</td></tr>
+</table>
+
+<div class="ask">💬 <strong>Your teacher is here.</strong> If any term feels fuzzy, ask me for an analogy, a code example, or where it shows up on the exam.</div>
+
+<div class="nav"><span>Claude Certified Architect — Foundations</span><a href="../lessons/0001-the-exam-and-the-four-domains.html">Lesson 1 →</a></div>
+</body>
+</html>

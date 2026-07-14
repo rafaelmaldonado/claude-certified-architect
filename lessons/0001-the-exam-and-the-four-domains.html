@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 1 — The exam & choosing the right surface</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<p class="progress">Claude Certified Architect · Foundations &nbsp;|&nbsp; Lesson 1 of many · Domain map</p>
+<p class="eyebrow">Lesson 1 · Orientation + first tradeoff skill</p>
+<h1>The exam, the four domains, and “which surface?”</h1>
+<p class="lede">Your win today: name the four exam domains from memory, and correctly pick which Claude “surface” a given job needs. That second skill is the exam’s whole personality — it grades tradeoff decisions, not trivia.</p>
+
+<h2>What this certification actually tests</h2>
+<p>The <a href="https://anthropic-partners.skilljar.com/claude-certified-architect-foundations-certification">Claude Certified Architect – Foundations</a> exam ($125, Anthropic partner program) validates one thing above all:</p>
+<blockquote>You can “make informed decisions about <strong>tradeoffs</strong> when implementing real-world solutions with Claude.”</blockquote>
+<p>Read that twice. It is not “can you recite the API.” It is “given a real problem, do you pick the right tool and the right settings, and can you say <em>why</em>.” Every lesson in this course is built around that verb: <strong>decide</strong>.</p>
+
+<h3>The four domains you’ll be tested on</h3>
+<table>
+<tr><th>#</th><th>Domain</th><th>Think of it as…</th></tr>
+<tr><td>1</td><td><strong>Claude API</strong></td><td>The foundation: one endpoint, <code>/v1/messages</code>. Everything sits on it.</td></tr>
+<tr><td>2</td><td><strong>Model Context Protocol (MCP)</strong></td><td>The universal plug for connecting Claude to tools & data.</td></tr>
+<tr><td>3</td><td><strong>Claude Agent SDK</strong></td><td>Claude Code as a library you build on.</td></tr>
+<tr><td>4</td><td><strong>Claude Code</strong></td><td>The finished agentic coding product.</td></tr>
+</table>
+<p>They stack: API → (tools) → MCP → Agent SDK → Claude Code. We’ll learn them in that dependency order. Full definitions live in the <a href="../reference/glossary.html">course glossary</a> — keep it open.</p>
+
+<div class="callout key"><span class="tag">The one mental model</span>
+Nearly every architecture question reduces to: <em>how much control does the model have, and who runs the loop?</em> A single API call gives the model zero autonomy and you total control. A full agent gives the model the wheel. The art is choosing the least-powerful option that still does the job.</div>
+
+<h2>The decision ladder: which surface for the job?</h2>
+<p>This is the single most exam-relevant skill. Start at the top and stop at the first row that fits — <strong>don’t reach for an agent when a single call will do.</strong></p>
+<table>
+<tr><th>If the job is…</th><th>Use</th><th>Why</th></tr>
+<tr><td>Classify / summarize / extract / answer — one shot</td><td><strong>Single API call</strong></td><td>One request in, one response out. No loop needed.</td></tr>
+<tr><td>Multi-step, but <em>you</em> know the steps in advance</td><td><strong>Workflow</strong> (API + tool use, your loop)</td><td>Predictable. Your code controls flow; cheaper and easier to debug.</td></tr>
+<tr><td>Open-ended; the <em>model</em> must decide the steps, your own tools</td><td><strong>Agent</strong> (API + Tool Runner)</td><td>Model-driven. You host it; SDK runs the tool loop.</td></tr>
+<tr><td>Agent that needs a hosted sandbox / persisted, versioned config</td><td><strong>Managed Agents</strong></td><td>Anthropic runs the loop <em>and</em> the container. Least code you own.</td></tr>
+<tr><td>A coding/filesystem agent on <em>your</em> infra, batteries included</td><td><strong>Claude Agent SDK</strong></td><td>Ships built-in Read/Write/Bash/etc. + the full harness.</td></tr>
+<tr><td>You (a developer) working in a terminal / IDE</td><td><strong>Claude Code</strong></td><td>The end-user product; not something you embed.</td></tr>
+</table>
+
+<div class="callout trap"><span class="tag">Classic exam trap</span>
+“Tool Runner” and “Claude Agent SDK” sound alike but differ. Tool Runner is a thin helper in the regular API SDK that loops over <em>tools you define</em> — no built-in tools. The Agent SDK is Claude Code as a library with built-in file/bash tools. Both are <em>harness-only</em> (you deploy them). Only <strong>Managed Agents</strong> also hosts the deployment.</div>
+
+<h2>The four “should I even build an agent?” checks</h2>
+<p>Before choosing any agent row, the exam expects you to sanity-check all four:</p>
+<ul>
+<li><strong>Complexity</strong> — is the task genuinely multi-step and hard to script in advance?</li>
+<li><strong>Value</strong> — does the outcome justify higher cost and latency?</li>
+<li><strong>Viability</strong> — is Claude actually good at this task type?</li>
+<li><strong>Cost of error</strong> — can mistakes be caught and recovered (tests, review, rollback)?</li>
+</ul>
+<p>A “no” on any of these means step back down the ladder to a workflow or a single call.</p>
+
+<h2>Check yourself</h2>
+<div class="quiz" data-quiz>
+<h3>Retrieval practice</h3>
+
+<div class="q">1. A support tool must read a ticket and label it “bug / billing / other.” Best surface?</div>
+<button class="opt" data-correct>A single Claude API call.</button>
+<button class="opt">A Managed Agents session.</button>
+<button class="opt">The Claude Agent SDK.</button>
+<div class="fb" data-feedback="One input, one classification, no steps to loop over → a single call. Reaching for an agent here is the exact over-engineering the exam penalizes."></div>
+
+<div class="q">2. Which surface has Anthropic host BOTH the agent loop and the tool sandbox?</div>
+<button class="opt">The Claude API Tool Runner.</button>
+<button class="opt" data-correct>Managed Agents (CMA).</button>
+<button class="opt">The Claude Agent SDK.</button>
+<div class="fb" data-feedback="Tool Runner and the Agent SDK are harness-only — you deploy them. Only Managed Agents supplies harness AND deployment."></div>
+
+<div class="q">3. The exam’s core competency is best described as…</div>
+<button class="opt">Memorizing every model ID.</button>
+<button class="opt" data-correct>Making informed tradeoff decisions.</button>
+<button class="opt">Writing MCP servers fast.</button>
+<div class="fb" data-feedback="Straight from the exam description. Study the 'which/when/why', not rote syntax."></div>
+</div>
+
+<div class="task"><span class="tag">Decision task</span>
+<p>For each, jot which surface you’d pick and one sentence why. Bring your answers to our next chat and I’ll grade them:</p>
+<ol>
+<li>A nightly job that reads yesterday’s sales CSV and emails a 3-bullet summary.</li>
+<li>An assistant that, given a vague bug report, explores a repo, edits files, and opens a PR — running on your own servers.</li>
+<li>A chat feature that answers questions using your product docs, with the model deciding when to search them.</li>
+</ol>
+</div>
+
+<h2>Primary source to read next</h2>
+<p>⭐ Skim the developer docs home to see the landscape in Anthropic’s own words: <a href="https://platform.claude.com/docs">platform.claude.com/docs</a>. Don’t memorize — just notice how tools, structured output, and thinking are all features of the <em>one</em> Messages endpoint.</p>
+
+<div class="ask">💬 <strong>I’m your teacher — ask me anything.</strong> Unsure why a workflow beats an agent for job #1 above? Want a real code sketch of a single API call? Confused by harness-vs-deployment? Ask. Also: please download the <strong>Exam Guide PDF</strong> from the Skilljar page and tell me the question count, time limit, and pass score so I can shape future quizzes like the real test.</div>
+
+<div class="nav"><a href="../reference/glossary.html">← Glossary</a><span>Next: Lesson 2 — Your first Claude API call (anatomy of a request)</span></div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+/* Shared stylesheet for the Claude Certified Architect course.
+   Tufte-inspired: generous margins, serif body, restrained palette.
+   Every lesson and reference doc links this so the course reads as one system. */
+
+:root {
+  --ink: #1a1a1a;
+  --paper: #fdfcf9;
+  --muted: #6b6b6b;
+  --rule: #e0ddd4;
+  --accent: #a8410e;      /* terracotta — used sparingly for emphasis */
+  --accent-soft: #f4ede4;
+  --code-bg: #f5f2ec;
+  --ok: #2f6b3c;
+  --warn: #9a6a00;
+  --maxw: 46rem;
+}
+
+* { box-sizing: border-box; }
+
+html { font-size: 18px; }
+
+body {
+  margin: 0 auto;
+  max-width: var(--maxw);
+  padding: 3rem 1.5rem 6rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.eyebrow {
+  font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin: 0 0 0.4rem;
+}
+
+h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 0.6rem; }
+h2 { font-size: 1.4rem; margin: 2.4rem 0 0.6rem; border-bottom: 1px solid var(--rule); padding-bottom: 0.3rem; }
+h3 { font-size: 1.1rem; margin: 1.6rem 0 0.4rem; }
+
+.lede { font-size: 1.12rem; color: #333; font-style: italic; margin: 0 0 1.5rem; }
+
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(168,65,14,0.3); }
+a:hover { border-bottom-color: var(--accent); }
+
+code, pre, kbd { font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace; font-size: 0.85em; }
+code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 3px; }
+pre { background: var(--code-bg); padding: 1rem 1.2rem; border-radius: 6px; overflow-x: auto; border: 1px solid var(--rule); line-height: 1.45; }
+pre code { background: none; padding: 0; }
+
+blockquote { border-left: 3px solid var(--accent); margin: 1.2rem 0; padding: 0.2rem 1.2rem; color: #444; }
+
+table { border-collapse: collapse; width: 100%; margin: 1.2rem 0; font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 0.9rem; }
+th, td { text-align: left; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { background: var(--accent-soft); font-weight: 600; }
+
+/* Callouts */
+.callout { border-radius: 6px; padding: 0.9rem 1.1rem; margin: 1.3rem 0; font-family: -apple-system, system-ui, sans-serif; font-size: 0.92rem; }
+.callout .tag { font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.7rem; display: block; margin-bottom: 0.3rem; }
+.callout.key { background: var(--accent-soft); border: 1px solid #e3d3c2; }
+.callout.key .tag { color: var(--accent); }
+.callout.trap { background: #fdf3f1; border: 1px solid #f0d0c8; }
+.callout.trap .tag { color: #b23a1e; }
+.callout.tip { background: #eef6ef; border: 1px solid #cfe4d2; }
+.callout.tip .tag { color: var(--ok); }
+
+/* Quiz widget styling (paired with assets/quiz.js) */
+.quiz { border: 1px solid var(--rule); border-radius: 8px; padding: 1.1rem 1.3rem; margin: 1.5rem 0; background: #fff; }
+.quiz h3 { margin-top: 0; }
+.quiz .q { font-weight: 600; margin: 1rem 0 0.5rem; font-family: -apple-system, system-ui, sans-serif; }
+.quiz .opt { display: block; width: 100%; text-align: left; margin: 0.35rem 0; padding: 0.55rem 0.8rem;
+  border: 1px solid var(--rule); border-radius: 6px; background: var(--paper); cursor: pointer;
+  font-family: -apple-system, system-ui, sans-serif; font-size: 0.9rem; transition: background 0.15s; }
+.quiz .opt:hover { background: var(--accent-soft); }
+.quiz .opt.correct { background: #e5f2e8; border-color: var(--ok); }
+.quiz .opt.wrong { background: #fbe9e6; border-color: #b23a1e; }
+.quiz .fb { font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; margin-top: 0.5rem; color: var(--muted); min-height: 1.2rem; }
+.quiz .fb.show { color: var(--ink); }
+
+/* Decision-task card */
+.task { border: 2px dashed var(--accent); border-radius: 8px; padding: 1.1rem 1.3rem; margin: 1.5rem 0; background: #fffdfa; }
+.task .tag { font-family: -apple-system, system-ui, sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; color: var(--accent); }
+
+/* Footer nav */
+.nav { display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; }
+.ask { margin-top: 2rem; padding: 0.9rem 1.1rem; background: var(--accent-soft); border-radius: 6px; font-family: -apple-system, system-ui, sans-serif; font-size: 0.88rem; }
+
+.progress { font-family: -apple-system, system-ui, sans-serif; font-size: 0.78rem; color: var(--muted); margin-bottom: 2rem; }
