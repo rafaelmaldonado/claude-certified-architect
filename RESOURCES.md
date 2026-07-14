@@ -2,6 +2,11 @@
 
 High-trust, primarily official Anthropic sources. Prefer these over parametric memory.
 
+**Exam is scored on 5 weighted domains** (see MISSION.md): Agentic Architecture & Orchestration
+(27%), Claude Code Config & Workflows (20%), Prompt Engineering & Structured Output (20%),
+Tool Design & MCP Integration (18%), Context Management & Reliability (15%). The sources below
+are grouped by the underlying *technology*; each maps to one or more scored domains.
+
 ## Exam & program
 - **Exam registration page** — https://anthropic-partners.skilljar.com/claude-certified-architect-foundations-certification
   - The authoritative source. Contains the Exam Guide PDF (behind login). ⭐ primary

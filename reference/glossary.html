@@ -14,9 +14,23 @@
 <div class="callout key"><span class="tag">Adhere to this</span>
 Once a term is defined here, all lessons use it consistently. If a lesson introduces a new term, it gets added here.</div>
 
-<h2>The four exam domains</h2>
+<h2>The five scored exam domains</h2>
+<p>These are the <em>competency domains</em> the exam grades, with their weightings. Spend time in proportion to weight — Agentic Architecture dominates.</p>
 <table>
-<tr><th>Domain</th><th>One-line meaning</th></tr>
+<tr><th>Domain</th><th>Weight</th><th>What it covers</th></tr>
+<tr><td><strong>Agentic Architecture &amp; Orchestration</strong></td><td>27%</td><td>Choosing the right surface (single call / workflow / agent / Managed Agents / Agent SDK), designing agent loops, multi-agent orchestration, harness-vs-deployment tradeoffs.</td></tr>
+<tr><td><strong>Claude Code Configuration &amp; Workflows</strong></td><td>20%</td><td>Configuring and driving Claude Code: settings, hooks, skills, MCP servers, permissions, subagents.</td></tr>
+<tr><td><strong>Prompt Engineering &amp; Structured Output</strong></td><td>20%</td><td>System prompts, adaptive thinking &amp; effort, structured outputs (JSON schema), instruction design.</td></tr>
+<tr><td><strong>Tool Design &amp; MCP Integration</strong></td><td>18%</td><td>Defining good tools, tool use loops, and connecting external capabilities via MCP.</td></tr>
+<tr><td><strong>Context Management &amp; Reliability</strong></td><td>15%</td><td>Prompt caching, compaction/context editing, streaming, error &amp; stop-reason handling, cost control.</td></tr>
+</table>
+
+<div class="callout key"><span class="tag">Material vs. scoring</span>
+The four <em>technologies</em> — Claude API, MCP, Claude Agent SDK, Claude Code — are the material. The five domains above are how mastery of that material is <em>scored</em>. Definitions of the four technologies follow.</div>
+
+<h3>The four underlying technologies</h3>
+<table>
+<tr><th>Technology</th><th>One-line meaning</th></tr>
 <tr><td><strong>Claude API</strong></td><td>The <code>/v1/messages</code> HTTP endpoint (and its SDKs) for sending prompts and getting responses. Everything else builds on it.</td></tr>
 <tr><td><strong>Model Context Protocol (MCP)</strong></td><td>An open standard for connecting Claude to external tools/data via reusable "servers" — like a USB port for AI capabilities.</td></tr>
 <tr><td><strong>Claude Agent SDK</strong></td><td>Claude Code packaged as a library: a batteries-included coding/filesystem agent (built-in Read/Write/Bash/etc.) you run on your own infra.</td></tr>

@@ -7,25 +7,28 @@
 <link rel="stylesheet" href="../assets/course.css">
 </head>
 <body>
-<p class="progress">Claude Certified Architect · Foundations &nbsp;|&nbsp; Lesson 1 of many · Domain map</p>
+<p class="progress">Claude Certified Architect · Foundations &nbsp;|&nbsp; Lesson 1 · Domain 1: Agentic Architecture & Orchestration (27%)</p>
 <p class="eyebrow">Lesson 1 · Orientation + first tradeoff skill</p>
 <h1>The exam, the four domains, and “which surface?”</h1>
-<p class="lede">Your win today: name the four exam domains from memory, and correctly pick which Claude “surface” a given job needs. That second skill is the exam’s whole personality — it grades tradeoff decisions, not trivia.</p>
+<p class="lede">Your win today: name the five scored exam domains (and which weighs most), and correctly pick which Claude “surface” a given job needs. That second skill is the exam’s whole personality — it grades tradeoff decisions, not trivia.</p>
 
 <h2>What this certification actually tests</h2>
 <p>The <a href="https://anthropic-partners.skilljar.com/claude-certified-architect-foundations-certification">Claude Certified Architect – Foundations</a> exam ($125, Anthropic partner program) validates one thing above all:</p>
 <blockquote>You can “make informed decisions about <strong>tradeoffs</strong> when implementing real-world solutions with Claude.”</blockquote>
 <p>Read that twice. It is not “can you recite the API.” It is “given a real problem, do you pick the right tool and the right settings, and can you say <em>why</em>.” Every lesson in this course is built around that verb: <strong>decide</strong>.</p>
 
-<h3>The four domains you’ll be tested on</h3>
+<h3>The five scored domains (with weights)</h3>
+<p>The Exam Guide grades five <em>competency</em> domains. Study in proportion to weight — the top row is more than a quarter of the exam.</p>
 <table>
-<tr><th>#</th><th>Domain</th><th>Think of it as…</th></tr>
-<tr><td>1</td><td><strong>Claude API</strong></td><td>The foundation: one endpoint, <code>/v1/messages</code>. Everything sits on it.</td></tr>
-<tr><td>2</td><td><strong>Model Context Protocol (MCP)</strong></td><td>The universal plug for connecting Claude to tools & data.</td></tr>
-<tr><td>3</td><td><strong>Claude Agent SDK</strong></td><td>Claude Code as a library you build on.</td></tr>
-<tr><td>4</td><td><strong>Claude Code</strong></td><td>The finished agentic coding product.</td></tr>
+<tr><th>Domain</th><th>Weight</th><th>Think of it as…</th></tr>
+<tr><td><strong>Agentic Architecture &amp; Orchestration</strong></td><td>27%</td><td>Picking the right surface &amp; designing the agent loop. Today’s lesson lives here.</td></tr>
+<tr><td><strong>Claude Code Configuration &amp; Workflows</strong></td><td>20%</td><td>Driving Claude Code: settings, hooks, skills, MCP, permissions.</td></tr>
+<tr><td><strong>Prompt Engineering &amp; Structured Output</strong></td><td>20%</td><td>System prompts, thinking/effort, JSON-schema outputs.</td></tr>
+<tr><td><strong>Tool Design &amp; MCP Integration</strong></td><td>18%</td><td>Good tools + connecting external capabilities via MCP.</td></tr>
+<tr><td><strong>Context Management &amp; Reliability</strong></td><td>15%</td><td>Caching, streaming, error &amp; stop-reason handling, cost.</td></tr>
 </table>
-<p>They stack: API → (tools) → MCP → Agent SDK → Claude Code. We’ll learn them in that dependency order. Full definitions live in the <a href="../reference/glossary.html">course glossary</a> — keep it open.</p>
+<div class="callout key"><span class="tag">Material vs. scoring</span>
+Under these five domains sit <strong>four technologies</strong> — the Claude API, MCP, the Claude Agent SDK, and Claude Code. The technologies are what you learn; the five domains are how you’re graded. They stack: API → (tools) → MCP → Agent SDK → Claude Code. Full definitions in the <a href="../reference/glossary.html">glossary</a>.</div>
 
 <div class="callout key"><span class="tag">The one mental model</span>
 Nearly every architecture question reduces to: <em>how much control does the model have, and who runs the loop?</em> A single API call gives the model zero autonomy and you total control. A full agent gives the model the wheel. The art is choosing the least-powerful option that still does the job.</div>
@@ -71,11 +74,11 @@ Nearly every architecture question reduces to: <em>how much control does the mod
 <button class="opt">The Claude Agent SDK.</button>
 <div class="fb" data-feedback="Tool Runner and the Agent SDK are harness-only — you deploy them. Only Managed Agents supplies harness AND deployment."></div>
 
-<div class="q">3. The exam’s core competency is best described as…</div>
-<button class="opt">Memorizing every model ID.</button>
-<button class="opt" data-correct>Making informed tradeoff decisions.</button>
-<button class="opt">Writing MCP servers fast.</button>
-<div class="fb" data-feedback="Straight from the exam description. Study the 'which/when/why', not rote syntax."></div>
+<div class="q">3. Which scored domain carries the most weight (27%)?</div>
+<button class="opt">Context Management & Reliability.</button>
+<button class="opt" data-correct>Agentic Architecture & Orchestration.</button>
+<button class="opt">Prompt Engineering & Structured Output.</button>
+<div class="fb" data-feedback="At 27% it's the single biggest slice — and it's exactly the 'which surface / how to orchestrate' tradeoff skill. Budget your study time here first."></div>
 </div>
 
 <div class="task"><span class="tag">Decision task</span>
@@ -92,7 +95,7 @@ Nearly every architecture question reduces to: <em>how much control does the mod
 
 <div class="ask">💬 <strong>I’m your teacher — ask me anything.</strong> Unsure why a workflow beats an agent for job #1 above? Want a real code sketch of a single API call? Confused by harness-vs-deployment? Ask. Also: please download the <strong>Exam Guide PDF</strong> from the Skilljar page and tell me the question count, time limit, and pass score so I can shape future quizzes like the real test.</div>
 
-<div class="nav"><a href="../reference/glossary.html">← Glossary</a><span>Next: Lesson 2 — Your first Claude API call (anatomy of a request)</span></div>
+<div class="nav"><a href="../reference/glossary.html">← Glossary</a><a href="0002-the-agent-loop-and-four-build-approaches.html">Lesson 2: The agent loop →</a></div>
 <script src="../assets/quiz.js"></script>
 </body>
 </html>
