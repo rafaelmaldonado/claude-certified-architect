@@ -80,7 +80,7 @@ th { background: var(--accent-soft); font-weight: 600; }
 .quiz .opt:hover { background: var(--accent-soft); }
 .quiz .opt.correct { background: #e5f2e8; border-color: var(--ok); }
 .quiz .opt.wrong { background: #fbe9e6; border-color: #b23a1e; }
-.quiz .fb { font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; margin-top: 0.5rem; color: var(--muted); min-height: 1.2rem; }
+.quiz .feedback { font-family: -apple-system, system-ui, sans-serif; font-size: 0.85rem; margin-top: 0.5rem; color: var(--muted); min-height: 1.2rem; }
 .quiz .fb.show { color: var(--ink); }
 
 /* Decision-task card */

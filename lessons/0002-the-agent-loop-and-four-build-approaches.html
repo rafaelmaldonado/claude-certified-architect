@@ -1,25 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lesson 2 — The agent loop & four ways to build one</title>
-<link rel="stylesheet" href="../assets/course.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lesson 2 — The agent loop & four ways to build one</title>
+    <link rel="stylesheet" href="../assets/course.css">
 </head>
+
 <body>
-<p class="progress">Claude Certified Architect · Foundations &nbsp;|&nbsp; Lesson 2 · Domain 1: Agentic Architecture & Orchestration (27%)</p>
-<p class="eyebrow"><a href="../index.html">← Index</a> · Lesson 2 · Inside the agent</p>
-<h1>The agent loop, and the four ways to build one</h1>
-<p class="lede">Your win today: draw the agent loop from memory, and use the <em>harness × deployment</em> grid to pick between a manual loop, the Tool Runner, Managed Agents, and the Agent SDK. This is the beating heart of the 27% domain.</p>
+    <p class="progress">Claude Certified Architect · Foundations &nbsp;|&nbsp; Lesson 2 · Domain 1: Agentic Architecture
+        & Orchestration (27%)</p>
+    <p class="eyebrow"><a href="../index.html">← Index</a> · Lesson 2 · Inside the agent</p>
+    <h1>The agent loop, and the four ways to build one</h1>
+    <p class="lede">Your win today: draw the agent loop from memory, and use the <em>harness × deployment</em> grid to
+        pick between a manual loop, the Tool Runner, Managed Agents, and the Agent SDK. This is the beating heart of the
+        27% domain.</p>
 
-<div class="callout key"><span class="tag">Recall from Lesson 1</span>
-You already decided <em>whether</em> to build an agent (the decision ladder). This lesson is the next question: once it <em>is</em> an agent, <em>how</em> do you build it? Same skill — tradeoffs — one level deeper.</div>
+    <div class="callout key"><span class="tag">Recall from Lesson 1</span>
+        You already decided <em>whether</em> to build an agent (the decision ladder). This lesson is the next question:
+        once it <em>is</em> an agent, <em>how</em> do you build it? Same skill — tradeoffs — one level deeper.</div>
 
-<h2>1 · What an “agent” actually is</h2>
-<p>Strip away the hype and an agent is just a <strong>loop around the Messages API</strong>. The model is stateless, so <em>something</em> has to keep calling it, run the tools it asks for, feed results back, and decide when it’s done. That “something” is the loop.</p>
+    <h2>1 · What an “agent” actually is</h2>
+    <p>Strip away the hype and an agent is just a <strong>loop around the Messages API</strong>. The model is stateless,
+        so <em>something</em> has to keep calling it, run the tools it asks for, feed results back, and decide when it’s
+        done. That “something” is the loop.</p>
 
-<h3>The loop, in five beats</h3>
-<pre><code>1. SEND    → call /v1/messages with the conversation + tool definitions
+    <h3>The loop, in five beats</h3>
+    <pre><code>1. SEND    → call /v1/messages with the conversation + tool definitions
 2. INSPECT → look at response.stop_reason
               • "end_turn"  → the model is done. EXIT the loop.
               • "tool_use"  → the model wants a tool. Continue ↓
@@ -28,52 +36,123 @@ You already decided <em>whether</em> to build an agent (the decision ladder). Th
               + a user turn carrying the matching tool_result blocks
 5. REPEAT  → go back to step 1 with the grown conversation</code></pre>
 
-<div class="callout trap"><span class="tag">Two facts the exam checks</span>
-<strong>(a)</strong> Every <code>tool_result</code> must carry the <em>same</em> <code>tool_use_id</code> as the request it answers. <strong>(b)</strong> The API is <em>stateless</em> — you resend the full, growing conversation every iteration. The server remembers nothing.</div>
+    <div class="callout trap"><span class="tag">Two facts the exam checks</span>
+        <strong>(a)</strong> Every <code>tool_result</code> must carry the <em>same</em> <code>tool_use_id</code> as the
+        request it answers. <strong>(b)</strong> The API is <em>stateless</em> — you resend the full, growing
+        conversation every iteration. The server remembers nothing.
+    </div>
 
-<h3>The exit conditions you must handle</h3>
-<table>
-<tr><th><code>stop_reason</code></th><th>Meaning</th><th>Loop action</th></tr>
-<tr><td><code>end_turn</code></td><td>Model finished naturally.</td><td>Exit — you have the answer.</td></tr>
-<tr><td><code>tool_use</code></td><td>Model wants one or more tools.</td><td>Run them, append results, continue.</td></tr>
-<tr><td><code>max_tokens</code></td><td>Hit the output cap mid-answer.</td><td>Raise <code>max_tokens</code> / stream; don’t treat as done.</td></tr>
-<tr><td><code>pause_turn</code></td><td>A long server-side tool run paused.</td><td>Re-send to resume — don’t add a “continue” message.</td></tr>
-<tr><td><code>refusal</code></td><td>Declined for safety.</td><td>Surface it; don’t blindly retry.</td></tr>
-</table>
-<p>Always cap the loop (e.g. <code>max_iterations = 10</code>) so a misbehaving model can’t spin forever — a reliability point that also lives in Domain 5.</p>
+    <h3>The exit conditions you must handle</h3>
+    <table>
+        <tr>
+            <th><code>stop_reason</code></th>
+            <th>Meaning</th>
+            <th>Loop action</th>
+        </tr>
+        <tr>
+            <td><code>end_turn</code></td>
+            <td>Model finished naturally.</td>
+            <td>Exit — you have the answer.</td>
+        </tr>
+        <tr>
+            <td><code>tool_use</code></td>
+            <td>Model wants one or more tools.</td>
+            <td>Run them, append results, continue.</td>
+        </tr>
+        <tr>
+            <td><code>max_tokens</code></td>
+            <td>Hit the output cap mid-answer.</td>
+            <td>Raise <code>max_tokens</code> / stream; don’t treat as done.</td>
+        </tr>
+        <tr>
+            <td><code>pause_turn</code></td>
+            <td>A long server-side tool run paused.</td>
+            <td>Re-send to resume — don’t add a “continue” message.</td>
+        </tr>
+        <tr>
+            <td><code>refusal</code></td>
+            <td>Declined for safety.</td>
+            <td>Surface it; don’t blindly retry.</td>
+        </tr>
+    </table>
+    <p>Always cap the loop (e.g. <code>max_iterations = 10</code>) so a misbehaving model can’t spin forever — a
+        reliability point that also lives in Domain 5.</p>
 
-<h2>2 · The mental model that unlocks the domain: <em>harness × deployment</em></h2>
-<p>Two independent questions decide how you build any agent:</p>
-<ul>
-<li><strong>Who supplies the harness?</strong> (the loop + context management above)</li>
-<li><strong>Who supplies the deployment?</strong> (the infra it runs on)</li>
-</ul>
-<p>These two axes are the whole game. Memorize this grid and most Domain-1 questions answer themselves:</p>
-<table>
-<tr><th>Approach</th><th>You write</th><th>Harness</th><th>Deployment</th><th>Tools available</th></tr>
-<tr><td><strong>Manual loop</strong><br>(API, your <code>while</code>)</td><td>The whole loop</td><td><strong>You</strong></td><td>You host</td><td>Only tools you define</td></tr>
-<tr><td><strong>Tool Runner</strong><br>(<code>client.beta.messages.tool_runner</code>)</td><td>Just the tool functions</td><td>SDK</td><td>You host</td><td>Only tools you define</td></tr>
-<tr><td><strong>Managed Agents</strong><br>(persisted agent + sessions)</td><td>Agent config + tool results</td><td>Anthropic</td><td><strong>Anthropic</strong></td><td>Hosted sandbox (bash/files/code) + MCP + your tools</td></tr>
-<tr><td><strong>Claude Agent SDK</strong><br>(separate library)</td><td>A prompt + options</td><td>SDK (Claude Code)</td><td>You host</td><td>Built-in Read/Write/Edit/Bash/Grep/… + MCP + subagents</td></tr>
-</table>
+    <h2>2 · The mental model that unlocks the domain: <em>harness × deployment</em></h2>
+    <p>Two independent questions decide how you build any agent:</p>
+    <ul>
+        <li><strong>Who supplies the harness?</strong> (the loop + context management above)</li>
+        <li><strong>Who supplies the deployment?</strong> (the infra it runs on)</li>
+    </ul>
+    <p>These two axes are the whole game. Memorize this grid and most Domain-1 questions answer themselves:</p>
+    <table>
+        <tr>
+            <th>Approach</th>
+            <th>You write</th>
+            <th>Harness</th>
+            <th>Deployment</th>
+            <th>Tools available</th>
+        </tr>
+        <tr>
+            <td><strong>Manual loop</strong><br>(API, your <code>while</code>)</td>
+            <td>The whole loop</td>
+            <td><strong>You</strong></td>
+            <td>You host</td>
+            <td>Only tools you define</td>
+        </tr>
+        <tr>
+            <td><strong>Tool Runner</strong><br>(<code>client.beta.messages.tool_runner</code>)</td>
+            <td>Just the tool functions</td>
+            <td>SDK</td>
+            <td>You host</td>
+            <td>Only tools you define</td>
+        </tr>
+        <tr>
+            <td><strong>Managed Agents</strong><br>(persisted agent + sessions)</td>
+            <td>Agent config + tool results</td>
+            <td>Anthropic</td>
+            <td><strong>Anthropic</strong></td>
+            <td>Hosted sandbox (bash/files/code) + MCP + your tools</td>
+        </tr>
+        <tr>
+            <td><strong>Claude Agent SDK</strong><br>(separate library)</td>
+            <td>A prompt + options</td>
+            <td>SDK (Claude Code)</td>
+            <td>You host</td>
+            <td>Built-in Read/Write/Edit/Bash/Grep/… + MCP + subagents</td>
+        </tr>
+    </table>
 
-<div class="callout key"><span class="tag">The one-sentence discriminator</span>
-Manual loop, Tool Runner, and Agent SDK all leave <strong>deployment to you</strong> — they’re harness-only. <strong>Only Managed Agents also hosts the deployment</strong> (it runs the loop <em>and</em> a per-session sandbox). That single fact separates the four.</div>
+    <div class="callout key"><span class="tag">The one-sentence discriminator</span>
+        Manual loop, Tool Runner, and Agent SDK all leave <strong>deployment to you</strong> — they’re harness-only.
+        <strong>Only Managed Agents also hosts the deployment</strong> (it runs the loop <em>and</em> a per-session
+        sandbox). That single fact separates the four.
+    </div>
 
-<h3>How to choose — the reasoning, not the memorization</h3>
-<ul>
-<li><strong>Want to own every detail of the loop</strong> (custom control flow, no beta dependency)? → <strong>Manual loop</strong>.</li>
-<li><strong>Custom-tool agent, but don’t want to hand-write the loop</strong>? → <strong>Tool Runner</strong> (still gives you approval gates, retries, result tweaks via per-turn hooks — “I need control” is rarely a reason to drop to manual).</li>
-<li><strong>Want Anthropic to run the loop <em>and</em> host a workspace</strong> — persisted, versioned agents, long sessions, file mounts, scheduling? → <strong>Managed Agents</strong>.</li>
-<li><strong>Want a batteries-included coding/filesystem agent on your own infra</strong>? → <strong>Claude Agent SDK</strong>.</li>
-</ul>
+    <h3>How to choose — the reasoning, not the memorization</h3>
+    <ul>
+        <li><strong>Want to own every detail of the loop</strong> (custom control flow, no beta dependency)? →
+            <strong>Manual loop</strong>.
+        </li>
+        <li><strong>Custom-tool agent, but don’t want to hand-write the loop</strong>? → <strong>Tool Runner</strong>
+            (still gives you approval gates, retries, result tweaks via per-turn hooks — “I need control” is rarely a
+            reason to drop to manual).</li>
+        <li><strong>Want Anthropic to run the loop <em>and</em> host a workspace</strong> — persisted, versioned agents,
+            long sessions, file mounts, scheduling? → <strong>Managed Agents</strong>.</li>
+        <li><strong>Want a batteries-included coding/filesystem agent on your own infra</strong>? → <strong>Claude Agent
+                SDK</strong>.</li>
+    </ul>
 
-<div class="callout trap"><span class="tag">The trap that sinks people</span>
-“Tool Runner” ≠ “Claude Agent SDK.” Tool Runner is a thin helper <em>inside the regular API SDK</em> — no built-in tools, no filesystem, you supply every tool. The Agent SDK is <em>Claude Code as a library</em> — ships built-in file/bash/search tools and the full harness. Both are harness-only. Expect at least one question probing exactly this.</div>
+    <div class="callout trap"><span class="tag">The trap that sinks people</span>
+        “Tool Runner” ≠ “Claude Agent SDK.” Tool Runner is a thin helper <em>inside the regular API SDK</em> — no
+        built-in tools, no filesystem, you supply every tool. The Agent SDK is <em>Claude Code as a library</em> — ships
+        built-in file/bash/search tools and the full harness. Both are harness-only. Expect at least one question
+        probing exactly this.</div>
 
-<h2>3 · Worked example — the same task, two ways</h2>
-<p>Task: “What’s 2 + 3?” with an <code>add</code> tool. First, the <strong>manual loop</strong> (you own everything):</p>
-<pre><code>messages = [{"role": "user", "content": "What is 2 + 3?"}]
+    <h2>3 · Worked example — the same task, two ways</h2>
+    <p>Task: “What’s 2 + 3?” with an <code>add</code> tool. First, the <strong>manual loop</strong> (you own
+        everything):</p>
+    <pre><code>messages = [{"role": "user", "content": "What is 2 + 3?"}]
 while True:
     resp = client.messages.create(model="claude-opus-4-8", max_tokens=1024,
                                   tools=tools, messages=messages)
@@ -88,8 +167,8 @@ while True:
                             "tool_use_id": block.id,        # ← same id!
                             "content": out})
     messages.append({"role": "user", "content": results})  # APPEND results, REPEAT</code></pre>
-<p>Now the <strong>Tool Runner</strong> — the SDK runs those same five beats for you:</p>
-<pre><code>@beta_tool
+    <p>Now the <strong>Tool Runner</strong> — the SDK runs those same five beats for you:</p>
+    <pre><code>@beta_tool
 def add(a: int, b: int) -> str:
     "Add two integers."
     return str(a + b)
@@ -99,53 +178,73 @@ runner = client.beta.messages.tool_runner(
     tools=[add], messages=[{"role": "user", "content": "What is 2 + 3?"}])
 for message in runner:      # loop, tool execution, and result feedback handled for you
     print(message)</code></pre>
-<p>Same loop, same result — you just chose who writes it. That choice <em>is</em> the exam skill.</p>
+    <p>Same loop, same result — you just chose who writes it. That choice <em>is</em> the exam skill.</p>
 
-<h2>Check yourself</h2>
-<div class="quiz" data-quiz>
-<h3>Retrieval practice</h3>
+    <h2>Check yourself</h2>
+    <div class="quiz" data-answer="1"
+        data-explain="tool_use means 'keep going — run my tool'. end_turn means the model is finished. Exit on end_turn.">
+        <h3>Retrieval practice</h3>
 
-<div class="q">1. In the loop, when do you STOP calling the API?</div>
-<button class="opt">When <code>stop_reason</code> is <code>tool_use</code>.</button>
-<button class="opt" data-correct>When <code>stop_reason</code> is <code>end_turn</code>.</button>
-<button class="opt">When the tool_result array is empty.</button>
-<div class="fb" data-feedback="tool_use means 'keep going — run my tool'. end_turn means the model is finished. Exit on end_turn."></div>
+        <div class="q">1. In the loop, when do you STOP calling the API?</div>
+        <button class="opt">When <code>stop_reason</code> is <code>tool_use</code>.</button>
+        <button class="opt">When <code>stop_reason</code> is <code>end_turn</code>.</button>
+        <button class="opt">When the tool_result array is empty.</button>
+        <div class="feedback"></div>
+    </div>
+    </div>
+    <div class="quiz" data-answer="1" data-explain="Manual loop, Tool Runner, and Agent SDK are harness-only — you deploy them. Only Managed Agents supplies harness AND deployment.">
+        <div class="q">2. Which approach hosts BOTH the harness and the deployment?</div>
+        <button class="opt">The API Tool Runner helper.</button>
+        <button class="opt">Managed Agents (CMA runtime).</button>
+        <button class="opt">The Claude Agent SDK library.</button>
+        <div class="feedback">
+        </div>
+    </div>
+    <div class="quiz" data-answer="1" data-explain="Built-in Read/Write/Bash/Grep + full harness, self-hosted = the Agent SDK. Tool Runner has no built-in tools; Managed Agents would host the deployment for you (not 'your own servers').">
+        <div class="q">3. You need a coding agent with built-in file & bash tools, on your own servers. Pick:</div>
+        <button class="opt">The Tool Runner with custom tools.</button>
+        <button class="opt">The Claude Agent SDK library.</button>
+        <button class="opt">A single Managed Agents session.</button>
+        <div class="feedback">
+        </div>
+    </div>
+    <div class="quiz" data-answer="2" data-explain="Each tool_result is paired to its tool_use by tool_use_id. Mismatch or omission → the API rejects the turn.">
+        <div class="q">4. A tool_result block must always include which field to match its request?</div>
+        <button class="opt">The tool’s <code>name</code> string.</button>
+        <button class="opt">The message <code>role</code> value.</button>
+        <button class="opt">The same <code>tool_use_id</code>.</button>
+        <div class="feedback">
+        </div>
+    </div>
 
-<div class="q">2. Which approach hosts BOTH the harness and the deployment?</div>
-<button class="opt">The API Tool Runner helper.</button>
-<button class="opt" data-correct>Managed Agents (CMA runtime).</button>
-<button class="opt">The Claude Agent SDK library.</button>
-<div class="fb" data-feedback="Manual loop, Tool Runner, and Agent SDK are harness-only — you deploy them. Only Managed Agents supplies harness AND deployment."></div>
+    <div class="task"><span class="tag">Decision task</span>
+        <p>For each, name the build approach (manual loop / Tool Runner / Managed Agents / Agent SDK) and one sentence
+            why. Bring them to our next chat:</p>
+        <ol>
+            <li>A weekend project: a chatbot that calls two of your own REST endpoints; you want minimal code and don’t
+                mind a beta helper.</li>
+            <li>A product feature where each end-user gets a long-running agent with its own file workspace, and you
+                don’t want to run container infra.</li>
+            <li>An internal “fix this failing test” bot that reads and edits a repo, running on your existing CI
+                servers.</li>
+            <li>A payment-refund agent where every tool call must pass a human approval gate and you want full control
+                of the control flow.</li>
+        </ol>
+    </div>
 
-<div class="q">3. You need a coding agent with built-in file & bash tools, on your own servers. Pick:</div>
-<button class="opt">The Tool Runner with custom tools.</button>
-<button class="opt" data-correct>The Claude Agent SDK library.</button>
-<button class="opt">A single Managed Agents session.</button>
-<div class="fb" data-feedback="Built-in Read/Write/Bash/Grep + full harness, self-hosted = the Agent SDK. Tool Runner has no built-in tools; Managed Agents would host the deployment for you (not 'your own servers')."></div>
+    <h2>Primary source to read next</h2>
+    <p>⭐ Anthropic’s own guidance on building agents and designing the tool surface: <a
+            href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview">Tool use overview</a>. Read it
+        for the loop and the “should I build an agent?” framing — the concepts, not the syntax.</p>
 
-<div class="q">4. A tool_result block must always include which field to match its request?</div>
-<button class="opt">The tool’s <code>name</code> string.</button>
-<button class="opt">The message <code>role</code> value.</button>
-<button class="opt" data-correct>The same <code>tool_use_id</code>.</button>
-<div class="fb" data-feedback="Each tool_result is paired to its tool_use by tool_use_id. Mismatch or omission → the API rejects the turn."></div>
-</div>
+    <div class="ask">💬 <strong>Ask your teacher.</strong> Want me to walk the loop line-by-line, show the Managed
+        Agents version of the worked example, or explain why Tool Runner still supports approval gates without a manual
+        loop? And I still need the <strong>Exam Guide PDF</strong> numbers (question count, time, pass score) to shape
+        quizzes like the real thing.</div>
 
-<div class="task"><span class="tag">Decision task</span>
-<p>For each, name the build approach (manual loop / Tool Runner / Managed Agents / Agent SDK) and one sentence why. Bring them to our next chat:</p>
-<ol>
-<li>A weekend project: a chatbot that calls two of your own REST endpoints; you want minimal code and don’t mind a beta helper.</li>
-<li>A product feature where each end-user gets a long-running agent with its own file workspace, and you don’t want to run container infra.</li>
-<li>An internal “fix this failing test” bot that reads and edits a repo, running on your existing CI servers.</li>
-<li>A payment-refund agent where every tool call must pass a human approval gate and you want full control of the control flow.</li>
-</ol>
-</div>
-
-<h2>Primary source to read next</h2>
-<p>⭐ Anthropic’s own guidance on building agents and designing the tool surface: <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview">Tool use overview</a>. Read it for the loop and the “should I build an agent?” framing — the concepts, not the syntax.</p>
-
-<div class="ask">💬 <strong>Ask your teacher.</strong> Want me to walk the loop line-by-line, show the Managed Agents version of the worked example, or explain why Tool Runner still supports approval gates without a manual loop? And I still need the <strong>Exam Guide PDF</strong> numbers (question count, time, pass score) to shape quizzes like the real thing.</div>
-
-<div class="nav"><a href="0001-the-exam-and-the-four-domains.html">← Lesson 1</a><span>Next: Lesson 3 — Designing the tool surface (bash vs dedicated tools)</span></div>
-<script src="../assets/quiz.js"></script>
+    <div class="nav"><a href="0001-the-exam-and-the-four-domains.html">← Lesson 1</a><span>Next: Lesson 3 — Designing
+            the tool surface (bash vs dedicated tools)</span></div>
+    <script src="../assets/quiz.js"></script>
 </body>
+
 </html>
