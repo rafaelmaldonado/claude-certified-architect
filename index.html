@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Certified Architect — Curso</title>
+<link rel="stylesheet" href="assets/course.css">
+<style>
+/* Solo lo específico del índice; el resto viene de course.css */
+.hero { margin-bottom: 2.5rem; }
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); margin: 1.2rem 0 2rem; }
+.card { display: block; border: 1px solid var(--rule); border-radius: 8px; padding: 1.1rem 1.2rem;
+  background: #fff; text-decoration: none; border-bottom: 1px solid var(--rule); transition: transform .12s, box-shadow .12s; }
+.card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,.07); border-bottom: 1px solid var(--rule); }
+.card .num { font-family: -apple-system, system-ui, sans-serif; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+.card .t { font-size: 1.08rem; margin: .3rem 0 .35rem; color: var(--ink); }
+.card .d { font-family: -apple-system, system-ui, sans-serif; font-size: .85rem; color: var(--muted); line-height: 1.45; }
+.domains { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0 0; }
+.chip { font-family: -apple-system, system-ui, sans-serif; font-size: .78rem; background: var(--accent-soft); border: 1px solid #e3d3c2; color: var(--accent); padding: .3rem .7rem; border-radius: 999px; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <p class="eyebrow">Curso · Preparación de certificación</p>
+  <h1>Claude Certified Architect — Foundations</h1>
+  <p class="lede">Tu punto de partida para navegar todas las lecciones, referencias y recursos. El examen evalúa <strong>decisiones de tradeoff</strong> en soluciones reales con Claude — no memorización.</p>
+  <div class="domains">
+    <span class="chip">Claude API</span>
+    <span class="chip">MCP</span>
+    <span class="chip">Claude Agent SDK</span>
+    <span class="chip">Claude Code</span>
+  </div>
+</div>
+
+<h2>Lecciones</h2>
+<div class="cards">
+  <a class="card" href="lessons/0001-the-exam-and-the-four-domains.html">
+    <div class="num">Lección 1</div>
+    <div class="t">El examen y “¿qué superficie usar?”</div>
+    <div class="d">Los cuatro dominios y la escalera de decisión: llamada única → workflow → agente → Managed Agents.</div>
+  </a>
+  <!-- Nuevas lecciones se agregan aquí a medida que las creamos -->
+</div>
+
+<h2>Referencia</h2>
+<div class="cards">
+  <a class="card" href="reference/glossary.html">
+    <div class="num">Glosario</div>
+    <div class="t">Vocabulario del curso</div>
+    <div class="d">Los términos canónicos de los cuatro dominios. Tenlo abierto mientras estudias.</div>
+  </a>
+</div>
+
+<h2>Recursos y misión</h2>
+<div class="cards">
+  <a class="card" href="RESOURCES.md">
+    <div class="num">Recursos</div>
+    <div class="t">Fuentes oficiales</div>
+    <div class="d">Docs de Anthropic por dominio + comunidades para practicar.</div>
+  </a>
+  <a class="card" href="MISSION.md">
+    <div class="num">Misión</div>
+    <div class="t">Por qué haces esto</div>
+    <div class="d">El objetivo que ancla toda la enseñanza: aprobar el examen como palanca profesional.</div>
+  </a>
+  <a class="card" href="https://anthropic-partners.skilljar.com/claude-certified-architect-foundations-certification">
+    <div class="num">Examen ↗</div>
+    <div class="t">Página oficial de registro</div>
+    <div class="d">Programa de partners de Anthropic en Skilljar · US$125. Aquí está el Exam Guide PDF.</div>
+  </a>
+</div>
+
+<div class="ask">💬 <strong>Soy tu profesor.</strong> Cuando termines una lección, vuelve aquí y avísame para desbloquear la siguiente — o pídeme cualquier aclaración.</div>
+
+<div class="nav"><span>Claude Certified Architect — Foundations</span><a href="lessons/0001-the-exam-and-the-four-domains.html">Empezar Lección 1 →</a></div>
+</body>
+</html>
