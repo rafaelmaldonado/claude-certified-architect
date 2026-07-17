@@ -39,3 +39,9 @@ land or advance a job building production applications with Claude.
 ## Open items
 - [ ] User to share Exam Guide format details (Q count, time, pass %).
 - [ ] Confirm whether user wants to also pursue Associate/Developer certs as stepping stones.
+
+## Progreso (hub)
+El landing (`learning/index.html`) calcula el avance de este curso como
+**lecciones en `lessons/` ÷ total planeado**, contadas en vivo vía la GitHub API.
+Cada archivo `lessons/NNNN-*.html` que construyas sube la barra automáticamente.
+- **Total planeado:** 20 lecciones (estimado; ajústalo aquí y en `PROJECTS[].total` del hub si cambia el plan).
