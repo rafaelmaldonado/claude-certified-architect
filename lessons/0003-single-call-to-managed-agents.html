@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lesson 3 — One call, one loop, whose computer?</title>
+    <link rel="stylesheet" href="../assets/course.css">
+</head>
+
+<body>
+    <p class="progress">Claude Certified Architect · Foundations &nbsp;|&nbsp; Lesson 3 · Domain 1: Agentic Architecture
+        & Orchestration (27%)</p>
+    <p class="eyebrow"><a href="../index.html">← Index</a> · Lesson 3 · Micro-lesson</p>
+    <h1>One call, one loop — and whose computer runs it</h1>
+    <p class="lede">Your win today: say out loud, for each of the four approaches, <em>who writes the loop</em> and
+        <em>whose computer it runs on</em> — and see the Managed Agents version of the same add-tool example you
+        already met in Lesson 2.</p>
+
+    <div class="callout key"><span class="tag">Your own question, answered</span>
+        “Is it a code loop that runs in different environments?” <strong>Yes.</strong> That's the whole idea. The agent
+        loop from <a href="0002-the-agent-loop-and-four-build-approaches.html">Lesson 2</a> is <em>one piece of code</em>.
+        The four approaches only differ by two things: <strong>who writes that loop</strong> and <strong>whose computer
+            it runs on</strong>.</div>
+
+    <h2>1 · “Single API call” is the thing <em>before</em> a loop</h2>
+    <p>A <strong>single API call</strong> is one round-trip to <code>/v1/messages</code>: you send messages, you get one
+        response. <em>Nothing loops.</em> If the model replies with <code>stop_reason: "tool_use"</code>, nothing
+        automatically runs the tool — the response just sits there.</p>
+    <p>An <strong>agent</strong> is what you get when you wrap a <strong>loop</strong> around that single call: run the
+        tool, feed the result back, call again, repeat until <code>end_turn</code>. So:</p>
+    <pre><code>single API call   = one turn.           (no tools run for you)
+agent             = a loop of API calls. (tools run, results fed back)</code></pre>
+    <p>Everything in Lesson 2 was about <em>who builds that loop</em>. This is the same skill, said slowly.</p>
+
+    <h2>2 · The two questions, drawn as a map</h2>
+    <p>Only two axes matter. Read each row as “who writes the loop code / whose computer runs it”:</p>
+    <table>
+        <tr>
+            <th>Approach</th>
+            <th>Who writes the loop</th>
+            <th>Whose computer</th>
+            <th>Built-in tools?</th>
+        </tr>
+        <tr>
+            <td><strong>Single API call</strong></td>
+            <td>— (no loop)</td>
+            <td>yours</td>
+            <td>none — one turn only</td>
+        </tr>
+        <tr>
+            <td><strong>Manual loop</strong></td>
+            <td><strong>you</strong>, by hand</td>
+            <td>yours</td>
+            <td>only tools you define</td>
+        </tr>
+        <tr>
+            <td><strong>Tool Runner</strong></td>
+            <td>the SDK (a helper)</td>
+            <td>yours</td>
+            <td>only tools you define</td>
+        </tr>
+        <tr>
+            <td><strong>Claude Agent SDK</strong></td>
+            <td>the SDK (full harness)</td>
+            <td>yours</td>
+            <td>Read/Write/Bash/Grep + MCP</td>
+        </tr>
+        <tr>
+            <td><strong>Managed Agents</strong></td>
+            <td><strong>Anthropic</strong></td>
+            <td><strong>Anthropic's</strong></td>
+            <td>hosted sandbox (bash/files/code) + MCP + yours</td>
+        </tr>
+    </table>
+    <div class="callout key"><span class="tag">The one line that separates them</span>
+        Manual loop, Tool Runner, and Agent SDK all run on <strong>your</strong> computer — they only differ in how much
+        loop code you write yourself (all of it → some of it → almost none). <strong>Managed Agents is the only one
+            that also runs on Anthropic's computer.</strong></div>
+
+    <h2>3 · The same “What is 2 + 3?” task — now as a Managed Agent</h2>
+    <p>In Lesson 2 you saw this task as a <em>manual loop</em> (you write all five beats) and as the <em>Tool
+            Runner</em> (the SDK writes them, on your machine). Here's the third view: <strong>Managed Agents</strong>,
+        where Anthropic writes the loop <em>and</em> runs it on a session in their sandbox.</p>
+    <pre><code># 1. Create a persisted agent config ONCE (server-side; versioned, reusable).
+agent = client.beta.agents.create(
+    model="claude-opus-4-8",
+    name="calculator",
+    instructions="You do arithmetic using the add tool.",
+    tools=[{
+        "name": "add",
+        "description": "Add two integers.",
+        "input_schema": {"type": "object",
+            "properties": {"a": {"type": "integer"}, "b": {"type": "integer"}},
+            "required": ["a", "b"]},
+    }],
+)
+
+# 2. Open a session and send the task. Anthropic runs the loop for you.
+session = client.beta.agents.sessions.create(agent_id=agent.id)
+run = client.beta.agents.sessions.runs.create(
+    session_id=session.id,
+    input="What is 2 + 3?")
+
+# 3. The run PAUSES when it needs YOUR tool (add isn't in the sandbox).
+#    You supply the result; Anthropic resumes the loop on its side.
+while run.status == "requires_action":
+    outputs = []
+    for call in run.required_action.tool_calls:      # same tool_use idea…
+        result = run_tool(call.name, call.input)
+        outputs.append({"tool_call_id": call.id,     # …same "echo the id" rule
+                        "output": result})
+    run = client.beta.agents.sessions.runs.submit_tool_outputs(
+        run_id=run.id, tool_outputs=outputs)
+
+print(run.output)   # "2 + 3 = 5"</code></pre>
+
+    <div class="callout trap"><span class="tag">Look at what changed — and what didn't</span>
+        <strong>Didn't change:</strong> tools are still declared, and every result still echoes the id of the call it
+        answers (<code>tool_call_id</code> here = the <code>tool_use_id</code> from Lesson 2). <strong>Changed:</strong>
+        there is <em>no <code>while</code> that re-calls the model</em> — you don't resend the conversation, you don't
+        check <code>end_turn</code>. Anthropic's server owns the loop and the state. You only step in to run <em>your
+            own</em> tools; its built-in sandbox tools (bash, files) run on their side without ever pausing.</div>
+
+    <div class="callout key"><span class="tag">Why the pause exists</span>
+        Your <code>add</code> function lives on <em>your</em> computer, so the server can't run it — it pauses and asks
+        you. If the agent had used a <em>sandbox</em> tool (run some Python, read a mounted file), no pause: that runs on
+        Anthropic's side. The pause is exactly the seam between “their computer” and “yours.”</div>
+
+    <p class="note"><em>Note: exact method names for the Managed Agents beta move fast — treat this as the shape, not
+            the syntax, and check the <a href="https://platform.claude.com/docs">docs</a>. The concept (persisted agent
+            → session → run that pauses for your tools) is what the exam tests.</em></p>
+
+    <h2>Check yourself</h2>
+    <div class="quiz" data-answer="1"
+        data-explain="A single API call is one turn — you get a response and nothing runs your tools. Wrapping a loop around it (run tool, feed back, repeat) is what makes it an agent.">
+        <h3>Retrieval practice</h3>
+        <div class="q">1. What is the difference between a single API call and an agent?</div>
+        <button class="opt">The agent uses a bigger, more capable model.</button>
+        <button class="opt">An agent is a loop wrapped around repeated API calls.</button>
+        <button class="opt">A single call cannot use any tools at all.</button>
+        <div class="feedback"></div>
+    </div>
+    <div class="quiz" data-answer="2"
+        data-explain="Manual loop, Tool Runner, and Agent SDK all run on your infra. Only Managed Agents runs on Anthropic's computer.">
+        <div class="q">2. Which approach runs the loop on Anthropic's computer, not yours?</div>
+        <button class="opt">The Tool Runner helper.</button>
+        <button class="opt">The Claude Agent SDK.</button>
+        <button class="opt">Managed Agents.</button>
+        <div class="feedback"></div>
+    </div>
+    <div class="quiz" data-answer="0"
+        data-explain="Your own tool runs on your machine, so the server can't execute it — the run pauses and asks you for the output, then resumes. Sandbox tools run server-side with no pause.">
+        <div class="q">3. In the Managed Agents run, why does it PAUSE and ask you for output?</div>
+        <button class="opt">Your tool runs on your computer, so the server can't.</button>
+        <button class="opt">The model always pauses once before finishing.</button>
+        <button class="opt">The session ran out of tokens mid-answer.</button>
+        <div class="feedback"></div>
+    </div>
+
+    <div class="task"><span class="tag">Decision task</span>
+        <p>One sentence each, bring to next chat: for the “2 + 3” task, why would you pick <strong>Tool Runner</strong>
+            over <strong>Managed Agents</strong> for a quick script — and what single thing would make you flip to
+            Managed Agents instead?</p>
+    </div>
+
+    <h2>Primary source to read next</h2>
+    <p>⭐ Anthropic docs home — <a href="https://platform.claude.com/docs">platform.claude.com/docs</a>. Skim the
+        Agents / tool-use section for the loop and the Managed Agents beta; read for the <em>concepts</em>, not the
+        method names.</p>
+
+    <div class="ask">💬 <strong>Ask your teacher.</strong> Want the four approaches as a single side-by-side code
+        diff, or a drill that mixes these with the Lesson 2 grid (interleaving)? Just ask. And I still need the
+        <strong>Exam Guide PDF</strong> numbers (question count, time, pass score) to tune quizzes to the real thing.</div>
+
+    <div class="nav"><a href="0002-the-agent-loop-and-four-build-approaches.html">← Lesson 2</a><span>Next: Lesson 4 —
+            Designing the tool surface (bash vs dedicated tools)</span></div>
+    <script src="../assets/quiz.js"></script>
+</body>
+
+</html>

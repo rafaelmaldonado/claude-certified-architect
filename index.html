@@ -17,6 +17,19 @@
 .card .d { font-family: -apple-system, system-ui, sans-serif; font-size: .85rem; color: var(--muted); line-height: 1.45; }
 .domains { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0 0; }
 .chip { font-family: -apple-system, system-ui, sans-serif; font-size: .78rem; background: var(--accent-soft); border: 1px solid #e3d3c2; color: var(--accent); padding: .3rem .7rem; border-radius: 999px; }
+/* Roadmap */
+.roadmap { list-style: none; padding: 0; margin: 1rem 0 2rem; border-left: 2px solid var(--rule); }
+.roadmap li { position: relative; padding: .55rem 0 .55rem 1.6rem; font-family: -apple-system, system-ui, sans-serif; font-size: .92rem; color: var(--ink); }
+.roadmap li::before { content: ""; position: absolute; left: -7px; top: .95rem; width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 2px solid var(--rule); }
+.roadmap li.done { color: var(--muted); }
+.roadmap li.done::before { background: var(--accent); border-color: var(--accent); }
+.roadmap li.done a { color: var(--muted); }
+.roadmap li.now { font-weight: 700; }
+.roadmap li.now::before { background: #fff; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.roadmap .lbl { font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-right: .5rem; }
+.roadmap li.done .lbl { color: #b6a48f; }
+.roadmap .dom { color: var(--muted); font-weight: 400; font-size: .82rem; }
+.phase { font-family: -apple-system, system-ui, sans-serif; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 1.4rem 0 .2rem 1.6rem; }
 </style>
 </head>
 <body>
@@ -33,6 +46,43 @@
   </div>
 </div>
 
+<h2>Roadmap</h2>
+<p class="lede">The full path to the exam — <strong>✓ done</strong>, <strong>▸ where you are now</strong>, and what's ahead. Ordered to build up, then map onto the five scored domains (heaviest first). ~20 lessons planned; the later ones will sharpen as we get there.</p>
+<ol class="roadmap">
+  <li class="done"><span class="lbl">✓ 1</span><a href="lessons/0001-the-exam-and-the-four-domains.html">The exam & “which surface?”</a> <span class="dom">· foundations</span></li>
+  <li class="done"><span class="lbl">✓ 2</span><a href="lessons/0002-the-agent-loop-and-four-build-approaches.html">The agent loop & 4 ways to build one</a> <span class="dom">· Domain 1 (27%)</span></li>
+  <li class="done"><span class="lbl">✓ 3</span><a href="lessons/0003-single-call-to-managed-agents.html">One call, one loop, whose computer?</a> <span class="dom">· Domain 1 (27%)</span></li>
+
+  <p class="phase">Tool design & MCP — Domain 4 (18%)</p>
+  <li class="now"><span class="lbl">▸ 4</span>Designing the tool surface: bash vs dedicated tools <span class="dom">· next</span></li>
+  <li><span class="lbl">5</span>Writing tools Claude uses well: names, descriptions, schemas</li>
+  <li><span class="lbl">6</span>MCP: connecting external tools & data via servers</li>
+
+  <p class="phase">Prompting & structured output — Domain 3 (20%)</p>
+  <li><span class="lbl">7</span>System prompts & instruction design</li>
+  <li><span class="lbl">8</span>Adaptive thinking & effort: the cost/quality lever</li>
+  <li><span class="lbl">9</span>Structured outputs: guaranteed-parseable JSON</li>
+
+  <p class="phase">Agentic architecture & orchestration — Domain 1 (27%)</p>
+  <li><span class="lbl">10</span>Workflow vs agent: choosing predictability vs autonomy</li>
+  <li><span class="lbl">11</span>Multi-agent orchestration: subagents & handoffs</li>
+  <li><span class="lbl">12</span>Managed Agents in depth: sessions, versioning, sandboxes</li>
+
+  <p class="phase">Context management & reliability — Domain 5 (15%)</p>
+  <li><span class="lbl">13</span>Prompt caching: the prefix-match rules</li>
+  <li><span class="lbl">14</span>Context editing & compaction for long runs</li>
+  <li><span class="lbl">15</span>Streaming, stop-reasons & error handling</li>
+  <li><span class="lbl">16</span>Cost control: batching, model choice, token budgets</li>
+
+  <p class="phase">Claude Code config & workflows — Domain 2 (20%)</p>
+  <li><span class="lbl">17</span>Claude Code: settings, permissions, MCP servers</li>
+  <li><span class="lbl">18</span>Hooks, skills & subagents in Claude Code</li>
+  <li><span class="lbl">19</span>The Agent SDK: Claude Code as a library</li>
+
+  <p class="phase">Exam readiness</p>
+  <li><span class="lbl">20</span>Mixed review & mock exam (interleaved recall)</li>
+</ol>
+
 <h2>Lessons</h2>
 <div class="cards">
   <a class="card" href="lessons/0001-the-exam-and-the-four-domains.html">
@@ -44,6 +94,11 @@
     <div class="num">Lesson 2 · Domain 1 (27%)</div>
     <div class="t">The agent loop & 4 ways to build one</div>
     <div class="d">The five-beat loop, stop-reason handling, and the harness × deployment grid: manual loop vs Tool Runner vs Managed Agents vs Agent SDK.</div>
+  </a>
+  <a class="card" href="lessons/0003-single-call-to-managed-agents.html">
+    <div class="num">Lesson 3 · Domain 1 (27%)</div>
+    <div class="t">One call, one loop, whose computer?</div>
+    <div class="d">Micro-lesson: single call vs agent, and the Managed Agents version of the add-tool example — who writes the loop and where it runs.</div>
   </a>
   <!-- New lessons get added here as we create them -->
 </div>

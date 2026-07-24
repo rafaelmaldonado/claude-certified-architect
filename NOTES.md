@@ -11,6 +11,10 @@
 - Four domains, taught in dependency order: API → tool use → MCP → Agent SDK → Claude Code.
 - Keep lessons short (one win each). Reference docs hold the durable compressed knowledge.
 
+## Preferences
+- Likes to **see what's coming next** — keep a visible lesson roadmap on the index
+  (done / current / upcoming), like other `learn-*` repos. Update it every new lesson.
+
 ## Reminders / TODO
 - Get the Exam Guide PDF from the user for exact format (Q count, time, pass %).
 - Verify community invite links before recommending.
